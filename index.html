@@ -1,0 +1,112 @@
+
+<!doctype html>
+<html>
+<head>
+<script src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script>
+<title>Download-Ballbuster.2020.360p.Webrip.x264.92613.[YTOR.net]</title>
+<style>
+video {
+  height: 100%;
+  width: 100%;
+}
+</style>
+</head>
+  <body>
+  <div class ="download"></div>
+<div class ="info"></div>
+<a href="https://tor.hdv.fun/ytor/7ef763422ccc463daa4337dda91338818a7acc00.torrent" target="_blank">[Download .torrent]</a>
+<video class="player"></video> 
+    <script>
+      window.client = new WebTorrent()
+
+      client.on('error', function (err) {
+        console.error('ERROR: ' + err.message)
+      })
+        var torrentId = "https://tor.hdv.fun/ytor/7ef763422ccc463daa4337dda91338818a7acc00.torrent"
+        
+        
+        client.add(torrentId, {'announce': ['wss://tr.hdv.fun','wss://tracker.openwebtorrent.com']},onTorrent)
+
+      function onTorrent (torrent) {
+        var interval = setInterval(function () {       
+            info('<b>Peers:</b> ' + torrent.numPeers + ' ' +
+      '<b>Progress:</b> ' + (torrent.progress * 100).toFixed(1) + '%' +
+      '<b>Download speed:</b> ' + prettierBytes(window.client.downloadSpeed) + '/s ' +
+      '<b>Upload speed:</b> ' + prettierBytes(window.client.uploadSpeed) + '/s ')
+          
+        }, 250)
+        
+      var webseed='https://ws.hdv.fun/0/s0/FzZN7ya6ATB2tEgo11tFmAErcwuPOZznPoASuEkvs9RFDAxfDjVOKpmV-VSXsG0pVoPiKB4I8iObhLspdpI-sVNptMBX25LSvLehYyXhgAZqxoxjCauG9O4xgbMFCie1UTRcFu3F-YN2Li1vn6i5xSRfUzhAB9uskuQp4uN3OPhBtGJzyZEP_oTuivp283alTJKvbD25S3qFoBCMOFpvpaiC_U-TiE9kavshAsWHcX3hhQikWkWEjXVwIhKk-RVad56mC2D33Hxd2Nj-M2AN0w=='
+      torrent.addWebSeed(webseed)
+        torrent.on('done', function () {
+          clearInterval(interval)
+          document.querySelector('.download').innerHTML=''
+          window.file.getBlobURL(function (err, url) {
+if (err) {
+throw err}
+console.log(url)
+  var a = document.createElement('a')
+a.setAttribute('target', '_self');
+  a.download = file.name
+  a.href = url
+  a.textContent =  file.name
+  info('Progress: 100%. ')
+   document.querySelector('.info').appendChild(a)
+ })           
+        })
+
+        // Render all files into to the page
+        torrent.files.forEach(function (file) {
+window.file=file
+       if ('MediaSource' in window ){
+          file.renderTo('.player')}
+  else{file.select()}
+       document.querySelector('.download').innerHTML ='Downloading ' +file.name +' - ('+prettierBytes(file.length)+') from torrent.'
+
+ })
+
+      }
+
+      function info (str) {
+        document.querySelector('.info').innerHTML =str
+
+      }
+      
+      
+      
+      function prettierBytes (num) {
+  if (typeof num !== 'number' || isNaN(num)) {
+    throw new TypeError('Expected a number, got ' + typeof num)
+  }
+  var neg = num < 0
+  var units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+
+  if (neg) {
+    num = -num
+  }
+
+  if (num < 1) {
+    return (neg ? '-' : '') + num + ' B'
+  }
+
+  var exponent = Math.min(Math.floor(Math.log(num) / Math.log(1000)), units.length - 1)
+  num = Number(num / Math.pow(1000, exponent))
+  var unit = units[exponent]
+  if (num >= 10 || num % 1 === 0) {
+    return (neg ? '-' : '') + num.toFixed(0) + ' ' + unit
+  } else {
+    return (neg ? '-' : '') + num.toFixed(1) + ' ' + unit
+  }
+}
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+ }
+
+    </script>
+  </body>
+</html>
