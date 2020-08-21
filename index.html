@@ -7,7 +7,7 @@
   </head>
   <body>
     <p>
-      This download the <a href="https://tor.hdv.fun/ytor/f70d540cef570e629268a7863cae789da3886dac.torrent">Sintel torrent</a>
+      This download the <a href="https://webtorrent.io/torrents/sintel.torrent">Sintel torrent</a>
       using HTTP, WebRTC and WebSeed.<br>Using a combination of node streams and whatwg streams
     </p>
 
@@ -15,7 +15,7 @@
 
     <script src="https://cdn.jsdelivr.net/webtorrent/latest/webtorrent.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/web-streams-polyfill@2.0.2/dist/ponyfill.min.js"></script>
-    <script src="./StreamSaver.js"></script>
+    <script src="../StreamSaver.js"></script>
     <script>
 
       function size (bytes, precision) {
@@ -29,7 +29,7 @@
       const client = window.client = new WebTorrent()
 
       // Sintel, a free, Creative Commons movie
-      const torrentId = 'https://tor.hdv.fun/ytor/f70d540cef570e629268a7863cae789da3886dac.torrent'
+      const torrentId = 'https://webtorrent.io/torrents/sintel.torrent'
 
       $start.onclick = () => {
         document.body.innerHTML = '<p id="$info">Downloading Torrent-file metadata</p>'
@@ -67,7 +67,7 @@
             meter.value = torrent.progress
           })
 
-          const file = torrent.files[0]
+          const file = torrent.files[5]
 
           // Unfortunately we have two different stream protocol so we can't pipe.
           file.createReadStream()
