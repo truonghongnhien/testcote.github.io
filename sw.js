@@ -2,7 +2,7 @@ self.addEventListener('fetch', function(event) {
   var url = event.request.url;
   console.log('SW: fetch', url);
   if (/\.mp4$/.test(url)) {
-    url = 'https://vjs.zencdn.net/v/oceans.mp4';
+    url = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4';
     var options = {
       credentials: 'include',
       mode: 'no-cors'
