@@ -44,6 +44,7 @@
         window.writer = fileStream.getWriter()
 
         client.add(torrentId, torrent => {
+           document.body.innerHTML = '<video><source src="Sintel.mp4" type="video/mp4"></video>'
           $info.remove()
 
           const meter = document.createElement('meter')
