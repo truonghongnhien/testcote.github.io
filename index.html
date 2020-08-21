@@ -67,7 +67,7 @@
             meter.value = torrent.progress
           })
 
-          const file = torrent.files[5]
+          const file = torrent.files[0]
 
           // Unfortunately we have two different stream protocol so we can't pipe.
           file.createReadStream()
