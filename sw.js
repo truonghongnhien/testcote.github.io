@@ -7,8 +7,12 @@ self.addEventListener('fetch', function(event) {
     url='https://webtorrent.io/torrents/Sintel/Sintel.mp4'
     var options = {
       method: 'GET',
-      headers:new Headers({'range': 'bytes=0-'})
+      
+   //   headers:new Headers({'range': 'bytes=0-'})
     };
+    if(event.request.headers.get('range')){
+    options.headers=new Headers({'range': 'bytes=0-'})
+    }
     console.log(options)
     event.respondWith(fetch(url, options));
   }
