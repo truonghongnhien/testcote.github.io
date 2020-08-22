@@ -145,7 +145,12 @@ self.addEventListener('fetch', function(event) {
       }).then(function(res) {
         if (!res) {
           logx("Not found in cache - doing fetch")
-          return fetch(event.request)
+             url='https://webtorrent.io/torrents/Sintel/Sintel.mp4'
+    var options = {
+      method: 'GET',      
+      headers:event.request.headers
+    };       
+          return fetch(fetch(url, options))
           .then(res => {
             logx("Fetch done - returning response ",res)
             return res.arrayBuffer();
