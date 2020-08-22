@@ -12,7 +12,7 @@ function send_message_to_client(client, msg){
           }
       };
 
-      client.postMessage("SW "+CACHE_VERSION+": '"+msg+"'", [msg_chan.port2]);
+      client.postMessage("SW : '"+msg+"'", [msg_chan.port2]);
   });
 }
 
