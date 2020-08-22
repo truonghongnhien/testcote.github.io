@@ -25,11 +25,7 @@ self.addEventListener('fetch', function(event) {
 //    options.headers=new Headers({'range': event.request.headers.get('range')});
 //      event.request.headers
 //    }
-    request1=request;
-    request1.url='https://webtorrent.io/torrents/Sintel/Sintel.mp4'
-    console.log(request1)
-//    event.respondWith(fetch(url, options));
-    event.respondWith(fetch(request1));
+    event.respondWith(fetch(url, options));
     return;
   }
   else{
