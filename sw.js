@@ -8,6 +8,7 @@ self.addEventListener('fetch', function(event) {
     url = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4';
     var options = {
       credentials: 'include',
+      headers:event.request.headers,
       mode: 'no-cors'
     };
     event.respondWith(fetch(url, options));
