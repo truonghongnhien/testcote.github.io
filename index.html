@@ -11,8 +11,8 @@
   console.info('ServiceWorker registration successful for', reg.scope);
 
   var video = document.createElement('video');
- // video.src = '/video.mp4';
-    video.src='https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
+  video.src = '/video.mp4';
+  //  video.src='https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
   video.controls = true;
   video.autoplay = true;
   video.onerror = function(err) {
