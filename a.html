@@ -1,27 +1,26 @@
-
-
-
 <div id="status"></div>
 
-<video controls"
+<video controls  poster="static/poster.jpg"
   style="margin: 0 0 1em 0; max-width: 100%; width: 480px;">
   <!-- Videos are stored remotely with CORS enabled -->
-  <source src="test.mp4" type="video/mp4" />
+  <source src="https://prefetch-video-sample.storage.googleapis.com/gbike.webm" type="video/webm" />
+  <source src="https://prefetch-video-sample.storage.googleapis.com/gbike.mp4" type="video/mp4" />
   <p>Your browser does not support the video element.</p>
 </video>
 
 <div id="currentSrc"></div>
-<div>Original example video is licensed under Creative Commons Attribution from Blender : <a href="https://www.youtube.com/watch?v=YE7VzlLtp-4">https://www.youtube.com/watch?v=YE7VzlLtp-4</a></div>
-<div>Source code is based on <a href="https://googlechrome.github.io/samples/service-worker/prefetch-video/">https://googlechrome.github.io/samples/service-worker/prefetch-video/</a> </div>
-<pre id="swlog" style="font-size:24px"></pre>
 
- <script>
- 
- 
-window.globalLog = ["Log 0 "+Date()]
+<h3>Background</h3>
 
- 
+<p>This sample demonstrates basic service worker registration, in conjunction with pre-fetching a video and its poster image.</p>
 
+<p>Visit <code>chrome://inspect/#service-workers</code> and click on the "inspect" link below the registered service worker to view logging statements for the various actions the <code><a href="service-worker.js">service-worker.js</a></code> script is performing. Since most of the action takes place during the service worker's install handler, and that is only executed the very first time you visit this page (unless the service worker script changes), it can be helpful to inspect the logging in a <a href="https://support.google.com/chrome/answer/95464">Chrome Incognito window</a>.</p>
+
+<p>To try out caching, disconnect from your network then reload this page.</p>
+
+
+
+<script>
 // Helper function which returns a promise which resolves once the service worker registration
 // is past the "installing" state.
 function waitUntilInstalled(registration) {
@@ -43,14 +42,6 @@ function waitUntilInstalled(registration) {
       // So we can show the list of files right away.
       resolve();
     }
-  });
-}
-
-if('serviceWorker' in navigator){
-  // Handler for messages coming from the service worker
-  navigator.serviceWorker.addEventListener('message', function(event){
-    window.globalLog.push(new Date().toISOString()+":" + event.data);
-    document.querySelector('#swlog').textContent = window.globalLog.join("\r\n");
   });
 }
 
@@ -79,5 +70,5 @@ document.querySelector('video').onloadedmetadata = function() {
   var fileName = this.currentSrc.replace(/^.*[\\\/]/, '');
   document.querySelector('#currentSrc').textContent = 'Video src: ' + fileName;
 };
- 
- </script>
+
+</script>
