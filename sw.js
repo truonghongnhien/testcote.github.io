@@ -11,7 +11,7 @@ self.addEventListener('fetch', function(event) {
    //   headers:new Headers({'range': 'bytes=0-'})
     };
     if(event.request.headers.get('range')){
-    options.headers=new Headers({'range': 'bytes=0-'});
+    options.headers=new Headers({'range': event.request.headers.get('range')});
     }
     console.log(options)
     event.respondWith(fetch(url, options));
