@@ -1,3 +1,39 @@
+var globalLog = self.globalLog;
+
+function send_message_to_client(client, msg){
+  return new Promise(function(resolve, reject){
+      var msg_chan = new MessageChannel();
+
+      msg_chan.port1.onmessage = function(event){
+          if(event.data.error){
+              reject(event.data.error);
+          }else{
+              resolve(event.data);
+          }
+      };
+
+      client.postMessage("SW "+CACHE_VERSION+": '"+msg+"'", [msg_chan.port2]);
+  });
+}
+
+function send_message_to_all_clients(msg){
+  clients.matchAll().then(clients => {
+      clients.forEach(client => {
+          send_message_to_client(client, msg).then(m => console.log("SW Received Message: "+m));
+      })
+  })
+}
+
+
+function logx(arg1,arg2,arg3,arg4,arg5){
+  console.log(arg1,arg2,arg3,arg4,arg5);
+  send_message_to_all_clients(arg1+" "+(arg2||"")+" "+(arg3||"")+" "+(arg4||"")+" "+(arg5||"")+" ");  
+}
+
+
+
+
+
 self.addEventListener('install', () => {
   self.skipWaiting();
 });
