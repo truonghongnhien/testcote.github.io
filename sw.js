@@ -8,7 +8,7 @@ self.addEventListener('fetch', function(event) {
       method: 'GET',
       credentials: 'include',
       headers:new Headers({'range': 'bytes=0-3'}),
-      mode: 'cors'
+      mode: 'no-cors'
     };
     console.log(options)
     event.respondWith(fetch(url, options));
