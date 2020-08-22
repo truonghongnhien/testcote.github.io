@@ -31,13 +31,6 @@ var CURRENT_CACHES = {
 
 self.addEventListener('install', function(event) {
   var urlsToPrefetch = [
-    './',
-    'index.js',
-    '../../styles/main.css',
-    'static/poster.jpg',
-    // The videos are stored remotely with CORS enabled.
-    'https://prefetch-video-sample.storage.googleapis.com/gbike.webm',
-    'https://prefetch-video-sample.storage.googleapis.com/gbike.mp4'
   ];
 
   // All of these logging statements should be visible via the "Inspect" interface
