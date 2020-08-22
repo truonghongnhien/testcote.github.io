@@ -1,4 +1,11 @@
 self.addEventListener('install', () => {
+  self.skipWaiting()
+})
+
+self.addEventListener('activate', event => {
+  event.waitUntil(self.clients.claim())
+
+
 
 self.addEventListener('fetch', function(event) {
   var url = event.request.url;
@@ -19,11 +26,5 @@ self.addEventListener('fetch', function(event) {
     event.respondWith(fetch(url, options));
   }
 });
-  
+
 })
-
-self.addEventListener('activate', event => {
-  event.waitUntil(self.clients.claim())
-})
-
-
