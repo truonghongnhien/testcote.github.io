@@ -1,0 +1,83 @@
+
+
+
+<div id="status"></div>
+
+<video controls  poster="static/poster.jpg"
+  style="margin: 0 0 1em 0; max-width: 100%; width: 480px;">
+  <!-- Videos are stored remotely with CORS enabled -->
+  <source src="static/mov_bbb.mp4" type="video/mp4" />
+  <p>Your browser does not support the video element.</p>
+</video>
+
+<div id="currentSrc"></div>
+<div>Original example video is licensed under Creative Commons Attribution from Blender : <a href="https://www.youtube.com/watch?v=YE7VzlLtp-4">https://www.youtube.com/watch?v=YE7VzlLtp-4</a></div>
+<div>Source code is based on <a href="https://googlechrome.github.io/samples/service-worker/prefetch-video/">https://googlechrome.github.io/samples/service-worker/prefetch-video/</a> </div>
+<pre id="swlog" style="font-size:24px"></pre>
+
+ <script>
+ 
+ 
+window.globalLog = ["Log 0 "+Date()]
+
+ 
+
+// Helper function which returns a promise which resolves once the service worker registration
+// is past the "installing" state.
+function waitUntilInstalled(registration) {
+  return new Promise(function(resolve, reject) {
+    if (registration.installing) {
+      // If the current registration represents the "installing" service worker, then wait
+      // until the installation step (during which the resources are pre-fetched) completes
+      // to display the file list.
+      registration.installing.addEventListener('statechange', function(e) {
+        if (e.target.state === 'installed') {
+          resolve();
+        } else if (e.target.state === 'redundant') {
+          reject();
+        }
+      });
+    } else {
+      // Otherwise, if this isn't the "installing" service worker, then installation must have been
+      // completed during a previous visit to this page, and the resources are already pre-fetched.
+      // So we can show the list of files right away.
+      resolve();
+    }
+  });
+}
+
+if('serviceWorker' in navigator){
+  // Handler for messages coming from the service worker
+  navigator.serviceWorker.addEventListener('message', function(event){
+    window.globalLog.push(new Date().toISOString()+":" + event.data);
+    document.querySelector('#swlog').textContent = window.globalLog.join("\r\n");
+  });
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./service-worker.js', {
+    scope: './'
+  })
+    .then(waitUntilInstalled)
+    // .then(showFilesList)
+    .catch(function(error) {
+      // Something went wrong during registration. The service-worker.js file
+      // might be unavailable or contain a syntax error.
+      document.querySelector('#status').textContent = error;
+    });
+} else {
+  // The current browser doesn't support service workers.
+  var aElement = document.createElement('a');
+  aElement.href =
+    'http://www.chromium.org/blink/serviceworker/service-worker-faq';
+  aElement.textContent =
+    'Service workers are not supported in the current browser.';
+  document.querySelector('#status').appendChild(aElement);
+}
+
+document.querySelector('video').onloadedmetadata = function() {
+  var fileName = this.currentSrc.replace(/^.*[\\\/]/, '');
+  document.querySelector('#currentSrc').textContent = 'Video src: ' + fileName;
+};
+ 
+ </script>
