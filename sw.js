@@ -1,3 +1,11 @@
+self.addEventListener('install', () => {
+  self.skipWaiting()
+})
+
+self.addEventListener('activate', event => {
+  event.waitUntil(self.clients.claim())
+})
+
 self.addEventListener('fetch', function(event) {
   var url = event.request.url;
   console.log('SW: fetch', url);
