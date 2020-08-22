@@ -8,10 +8,8 @@
   <body>
 <script>
   navigator.serviceWorker.register('sw.js').then(function(reg) {
-  await  setTimeout(function(){ alert("Hello"); }, 1000);
-  console.info('ServiceWorker registration successful for', reg.scope);
-
-
+   setTimeout(function(){ 
+    console.info('ServiceWorker registration successful for', reg.scope);
   var video = document.createElement('video');
   video.src = '/video.mp4';
   //  video.src='https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
@@ -24,6 +22,9 @@
     console.info('Video load success');
   }
   document.body.appendChild(video);
+  
+  }, 1000);
+  
 
 }).catch(function(err) {
   console.error('ServiceWorker registration failed:', err);
