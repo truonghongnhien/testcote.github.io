@@ -35,13 +35,20 @@ function logx(arg1,arg2,arg3,arg4,arg5){
 
 
 self.addEventListener('install', () => {
+  logx('Handling install event. Resources to prefetch:');
   self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
+  logx("activate");
   event.waitUntil(self.clients.claim());
 
 });
+self.addEventListener('message', function(event){
+  console.log("SW Received Message: " + event.data);
+  // event.ports[0].postMessage("SW Says 'Hello back!'");
+});
+
 
 
 self.addEventListener('fetch', function(event) {
