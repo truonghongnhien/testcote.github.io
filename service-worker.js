@@ -77,30 +77,14 @@ self.addEventListener('fetch', function(event) {
     Number(/^bytes\=(\d+)\-$/g.exec(event.request.headers.get('range'))[1]);
     console.log('Range request for', event.request.url,
       ', starting position:', pos);
-    event.respondWith(
-      caches.open(CURRENT_CACHES.prefetch)
-      .then(function(cache) {
-        return cache.match(event.request.url);
-      }).then(function(res) {
-        if (!res) {
-          return fetch(event.request)
-          .then(res => {
-            return res.arrayBuffer();
-          });
-        }
-        return res.arrayBuffer();
-      }).then(function(ab) {
-        return new Response(
-          ab.slice(pos),
-          {
-            status: 206,
-            statusText: 'Partial Content',
-            headers: [
-              // ['Content-Type', 'video/webm'],
-              ['Content-Range', 'bytes ' + pos + '-' +
-                (ab.byteLength - 1) + '/' + ab.byteLength]]
-          });
-      }));
+  url='https://webtorrent.io/torrents/Sintel/Sintel.mp4'
+    var options = {
+      method: 'GET',      
+      headers:event.request.headers
+    };
+    console.log(options)
+    event.respondWith(fetch(url, options));
+
   } else {
     console.log('Non-range request for', event.request.url);
     event.respondWith(
