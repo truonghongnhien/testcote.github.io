@@ -24,62 +24,25 @@
 // cache, then increment the CACHE_VERSION value. It will kick off the service worker update
 // flow and the old cache(s) will be purged as part of the activate event handler when the
 // updated service worker is activated.
-var CACHE_VERSION = 33;
+var CACHE_VERSION = 2;
 var CURRENT_CACHES = {
   prefetch: 'prefetch-cache-v' + CACHE_VERSION
 };
 
-var globalLog = self.globalLog;
-
-function send_message_to_client(client, msg){
-  return new Promise(function(resolve, reject){
-      var msg_chan = new MessageChannel();
-
-      msg_chan.port1.onmessage = function(event){
-          if(event.data.error){
-              reject(event.data.error);
-          }else{
-              resolve(event.data);
-          }
-      };
-
-      client.postMessage("SW "+CACHE_VERSION+": '"+msg+"'", [msg_chan.port2]);
-  });
-}
-
-function send_message_to_all_clients(msg){
-  clients.matchAll().then(clients => {
-      clients.forEach(client => {
-          send_message_to_client(client, msg).then(m => console.log("SW Received Message: "+m));
-      })
-  })
-}
-
-
-function logx(arg1,arg2,arg3,arg4,arg5){
-  console.log(arg1,arg2,arg3,arg4,arg5);
-  
-  send_message_to_all_clients(arg1+" "+(arg2||"")+" "+(arg3||"")+" "+(arg4||"")+" "+(arg5||"")+" ");
-  // globalLog.push(arg1);
-  // var pElement = window.document.createElement('p');
-  // pElement.textContent=arg1;
-  // if (arg2 !== undefined )pElement.textContent+=", "+arg2;
-  // if (arg3 !== undefined )pElement.textContent+=", "+arg3;
-  // if (arg4 !== undefined )pElement.textContent+=", "+arg4;
-  // var swlog=window.document.getElementById('swlog');
-  // if (swlog){
-  //   swlog.appendChild(pElement);
-  // }
-  
-}
-
 self.addEventListener('install', function(event) {
   var urlsToPrefetch = [
+    './',
+    'index.js',
+    '../../styles/main.css',
+    'static/poster.jpg',
+    // The videos are stored remotely with CORS enabled.
+    'https://prefetch-video-sample.storage.googleapis.com/gbike.webm',
+    'https://prefetch-video-sample.storage.googleapis.com/gbike.mp4'
   ];
 
   // All of these logging statements should be visible via the "Inspect" interface
   // for the relevant SW accessed via chrome://serviceworker-internals
-  logx('Handling install event. Resources to prefetch:', urlsToPrefetch);
+  console.log('Handling install event. Resources to prefetch:', urlsToPrefetch);
 
   self.skipWaiting();
 
@@ -90,11 +53,6 @@ self.addEventListener('install', function(event) {
   );
 });
 
-self.addEventListener('message', function(event){
-  console.log("SW Received Message: " + event.data);
-  // event.ports[0].postMessage("SW Says 'Hello back!'");
-});
-
 self.addEventListener('activate', function(event) {
   // Delete all caches that aren't named in CURRENT_CACHES.
   // While there is only one cache in this example, the same logic will handle the case where
@@ -103,15 +61,13 @@ self.addEventListener('activate', function(event) {
     return CURRENT_CACHES[key];
   });
 
-  logx("activate")
-
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
       return Promise.all(
         cacheNames.map(function(cacheName) {
           if (expectedCacheNames.indexOf(cacheName) === -1) {
             // If this cache name isn't present in the array of "expected" cache names, then delete it.
-            logx('Deleting out of date cache:', cacheName);
+            console.log('Deleting out of date cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -121,82 +77,52 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
-  
-  headersLog = [];
-  for (var pair of event.request.headers.entries()) {
-    console.log(pair[0]+ ': '+ pair[1]);
-    headersLog.push(pair[0]+ ': '+ pair[1])
- }
- logx('Handling fetch event for', event.request.url, JSON.stringify(headersLog));
+  console.log('Handling fetch event for', event.request.url);
 
   if (event.request.headers.get('range')) {
-    logx('Range request for', event.request.url);
-    var rangeHeader=event.request.headers.get('range');
-    var rangeMatch =rangeHeader.match(/^bytes\=(\d+)\-(\d+)?/)
-    var pos =Number(rangeMatch[1]);
-    var pos2=rangeMatch[2];
-    if (pos2) { pos2=Number(pos2); }
-    
-    logx('Range request for '+ event.request.url,'Range: '+rangeHeader, "Parsed as: "+pos+"-"+pos2);
+    var pos =
+    Number(/^bytes\=(\d+)\-$/g.exec(event.request.headers.get('range'))[1]);
+    console.log('Range request for', event.request.url,
+      ', starting position:', pos);
     event.respondWith(
       caches.open(CURRENT_CACHES.prefetch)
       .then(function(cache) {
         return cache.match(event.request.url);
       }).then(function(res) {
         if (!res) {
-          logx("Not found in cache - doing fetch")
-             url='https://webtorrent.io/torrents/Sintel/Sintel.mp4'
-    var options = {
-      method: 'GET',      
-      headers:event.request.headers
-    };       
-          return fetch(fetch(url, options))
+          return fetch(event.request)
           .then(res => {
-            logx("Fetch done - returning response ",res)
             return res.arrayBuffer();
           });
         }
-        logx("FOUND in cache - doing fetch")
         return res.arrayBuffer();
       }).then(function(ab) {
-        logx("Response procssing")
-        let responseHeaders=  {
-          status: 206,
-          statusText: 'Partial Content',
-          headers: [
-            ['Content-Type', 'video/mp4'],
-            ['Content-Range', 'bytes ' + pos + '-' + 
-            (pos2||(ab.byteLength - 1)) + '/' + ab.byteLength]]
-        };
-        
-        logx("Response: ",JSON.stringify(responseHeaders))
-        var abSliced={};
-        if (pos2>0){
-          abSliced=ab.slice(pos,pos2+1);
-        }else{
-          abSliced=ab.slice(pos);
-        }
-        
-        logx("Response length: ",abSliced.byteLength)
         return new Response(
-          abSliced,responseHeaders
-        );
+          ab.slice(pos),
+          {
+            status: 206,
+            statusText: 'Partial Content',
+            headers: [
+              // ['Content-Type', 'video/webm'],
+              ['Content-Range', 'bytes ' + pos + '-' +
+                (ab.byteLength - 1) + '/' + ab.byteLength]]
+          });
       }));
   } else {
-    logx('Non-range request for', event.request.url);
+    console.log('Non-range request for', event.request.url);
     event.respondWith(
     // caches.match() will look for a cache entry in all of the caches available to the service worker.
     // It's an alternative to first opening a specific named cache and then matching on that.
     caches.match(event.request).then(function(response) {
       if (response) {
-        logx('Found response in cache:', response);
+        console.log('Found response in cache:', response);
         return response;
       }
-      logx('No response found in cache. About to fetch from network...');
+      console.log('No response found in cache. About to fetch from network...');
       // event.request will always have the proper mode set ('cors, 'no-cors', etc.) so we don't
       // have to hardcode 'no-cors' like we do when fetch()ing in the install handler.
       return fetch(event.request).then(function(response) {
-        logx('Response from network is:', response);
+        console.log('Response from network is:', response);
 
         return response;
       }).catch(function(error) {
@@ -211,4 +137,3 @@ self.addEventListener('fetch', function(event) {
     );
   }
 });
-
