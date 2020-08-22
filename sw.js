@@ -10,6 +10,7 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', function(event) {
   var url = event.request.url;
+  var request = event.request;
   console.log('SW: fetch', url);
     console.log(event.request.headers.get('range'));
   if (/\.mp4$/.test(url)) {
@@ -25,6 +26,11 @@ self.addEventListener('fetch', function(event) {
 //    }
     console.log(options)
     event.respondWith(fetch(url, options));
+  }
+  else{
+    console.log('proxy forward!!!!');
+        event.respondWith(fetch(request));
+        return;
   }
 });
 
