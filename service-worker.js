@@ -75,12 +75,6 @@ function logx(arg1,arg2,arg3,arg4,arg5){
 
 self.addEventListener('install', function(event) {
   var urlsToPrefetch = [
-    './',
-    'index.js',
-    'static/poster.jpg',
-    // The videos are stored remotely with CORS enabled.
-    'static/mov_bbb.mp4',
-    'service-worker.js'
   ];
 
   // All of these logging statements should be visible via the "Inspect" interface
