@@ -9,6 +9,7 @@ self.addEventListener('fetch', function(event) {
       headers:new Headers({'range': event.request.headers.get('range')}),
       mode: 'no-cors'
     };
+    console.log(options)
     event.respondWith(fetch(url, options));
   }
 });
