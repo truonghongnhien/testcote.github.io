@@ -62,7 +62,7 @@ if ('serviceWorker' in navigator) {
     var video = document.createElement('video');
   video.src = '/video.mp4';
   video.controls = true;
-  video.autoplay = true;
+  video.autoplay = false;
   video.onerror = function(err) {
     console.error('Video load fail', err);
   }
